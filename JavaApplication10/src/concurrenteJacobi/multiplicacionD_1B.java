@@ -2,7 +2,7 @@ package concurrenteJacobi;
 
 public class multiplicacionD_1B extends Thread{
     private int elementoD, elementoB;
-    private int resultado;
+    private double resultado;
 
     public multiplicacionD_1B(int elementoD, int elementoB) {
         this.elementoD = elementoD;
@@ -11,10 +11,11 @@ public class multiplicacionD_1B extends Thread{
 
     @Override
     public void run(){
-        resultado = elementoD * elementoB;
+        //System.out.println((1.0/elementoD));
+        resultado = (1.0/elementoD) * elementoB;
     }
 
-    public int getResultado() {
+    public double getResultado() {
         return resultado;
     }
 }
