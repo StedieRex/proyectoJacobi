@@ -67,14 +67,29 @@ public class main {
         int[][] D;
         int[][] L;
         int[][] U;
+        int n=100;
 
-        //matriz de prueba
+        //la parte 1 representa la multiplicacion de D-1 por b, la parte 2 es la suma de D-1(L+U)
+        int[] resultadoParte1; 
+        int[] resultadoParte2;
+
+        //matriz de prueba-
         int[][] prueba = {
             {3,-1,-1},
             {-1,3,1},
             {2,1,4},
         };
-        
+        int b[] = {1,3,7};
+
+        // int prueba[][] = new int[n][n];
+        // // numeros aleatorios del -10 al 10 para rellenar la matriz
+        // for(int i=0; i<n; i++){
+        //     for(int j=0; j<n; j++){
+        //         prueba[i][j] = (int)(Math.random()*21)-10;
+        //     }
+        // }
+        // imprimirMatriz(prueba);
+
         D=transpuestaMatrix(prueba);
         /*prueba transpuesta*/
         // imiprimirMatriz(D);
@@ -86,6 +101,22 @@ public class main {
         /*prueba triangulo superior */
         //imprimirMatriz(U);
         
+        /*multiplicacion D-1 por b */
+        int tam = b.length;
+        for(int i=0; i<b.length; i=+2){
+            if(tam>2){//el -1 es para compensar el hecho de que los indices empiezan en 0
+                multiplicacionD_1B hilo = new multiplicacionD_1B(D[i][i], b[i]);
+                hilo.start();
+                try{
+                    hilo.join();
+                }catch(InterruptedException e){
+                    
+                }
+                b[i] = hilo.getResultado();
+                tam=tam-2;
+            }
+        }
+
         //referencia de la concurrencia
         // HiloSumaPar hilo1= new HiloSumaPar("par",x0,xn,n);
         // HiloSumaImpar hilo2= new HiloSumaImpar("impar",x0,xn,n);
