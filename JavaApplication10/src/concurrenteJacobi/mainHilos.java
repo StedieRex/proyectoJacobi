@@ -1,5 +1,6 @@
 package concurrenteJacobi;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 import concurrenteJacobi.guardandoArreglos;
@@ -71,6 +72,7 @@ public class mainHilos {
         int[][] LmasU;
         int n=100;
         ArrayList <guardandoArreglos> listaArreglos = new ArrayList<guardandoArreglos>();
+        ArrayList <guardandoArreglos> listaResultado = new ArrayList<guardandoArreglos>();
 
         //la parte 1 representa la multiplicacion de D-1 por b, la parte 2 es la suma de D-1(L+U)
         double[] resultadoParte1; 
@@ -82,7 +84,7 @@ public class mainHilos {
             {-1,3,1},
             {2,1,4},
         };
-        int b[] = {1,3,7};
+        double b[] = {1,3,7};
 
         /*matriz de aleatoria */
         // int prueba[][] = new int[n][n];
@@ -92,11 +94,16 @@ public class mainHilos {
         //         prueba[i][j] = (int)(Math.random()*21)-10;
         //     }
         // }
-        // int b[] = new int[n];
+        // double b[] = new int[n];
         // // numeros aleatorios del -10 al 10 para rellenar el vector
         // for(int i=0; i<n; i++){
         //     b[i] = (int)(Math.random()*21)-10;
         // }
+
+        double []arregloIteracion = new double[b.length];
+        for(int i=0; i<b.length; i++){
+            arregloIteracion[i] = 0;
+        }
 
         resultadoParte1 = new double[b.length];
         int tamMatriz = prueba.length;
@@ -168,22 +175,40 @@ public class mainHilos {
             listaArreglos.add(new guardandoArreglos(resultadoParte2));
         }
 
-        //referencia de la concurrencia
-        // HiloSumaPar hilo1= new HiloSumaPar("par",x0,xn,n);
-        // HiloSumaImpar hilo2= new HiloSumaImpar("impar",x0,xn,n);
-        
-        // hilo1.start();
-        // hilo2.start();
-        
-        // try{
-        //     hilo1.join();
-        //     hilo2.join();
-        // }catch(InterruptedException e){
-            
-        // }
-        // suma = (h/3)*(fx(x0)+fx(xn)+hilo1.return_suma()+hilo2.return_suma());
-        // System.out.println("La integral es: "+suma);
+        int [] resultado = new int[b.length];
+        //do{
+            int faltante2 = 0;
+            for(int i=0; i<listaArreglos.size()-1; i+=numHilos){
+                System.out.println("i: "+i);
+                multiplicandoArreglos hilo = new multiplicandoArreglos(listaArreglos.get(i).getArreglo(), arregloIteracion);
+                multiplicandoArreglos hilo2 = new multiplicandoArreglos(listaArreglos.get(i+1).getArreglo(), arregloIteracion);
+                // multiplicandoArreglos hilo3 = new multiplicandoArreglos(listaArreglos.get(i+2).getArreglo(), b);
+                // multiplicandoArreglos hilo4 = new multiplicandoArreglos(listaArreglos.get(i+3).getArreglo(), b);
+                // multiplicandoArreglos hilo5 = new multiplicandoArreglos(listaArreglos.get(i+4).getArreglo(), b);
 
+                hilo.start();
+                hilo2.start();
+                // hilo3.start();
+                // hilo4.start();
+                // hilo5.start();
+                try{
+                    hilo.join();
+                    hilo2.join();
+                    // hilo3.join();
+                    // hilo4.join();
+                    // hilo5.join();
+                }catch(InterruptedException e){
+                    
+                }
+                resultado[i] = (int)hilo.getResultado();
+                resultado[i+1] = (int)hilo2.getResultado();
+                // resultado[i+2] = (int)hilo3.getResultado();
+                // resultado[i+3] = (int)hilo4.getResultado();
+                // resultado[i+4] = (int)hilo5.getResultado();
+                faltante2 = i;
+            }
+        //}while(comprandoResultado(b,resultado));
+        imprimirVector(resultado);
         //--------------------obteniendo tiempo de ejecucion---------------------
         // Obtener el tiempo de finalización
         long endTime = System.nanoTime();
