@@ -1,12 +1,14 @@
 package concurrenteJacobi;
 
-public class multiplicandoArreglos extends Thread{
+public class multiplicandoArreglos_suma extends Thread{
     private double[] arreglo1, arreglo2;
+    private double suma;
     private double resultado;
 
-    public multiplicandoArreglos(double[] arreglo1, double[] arreglo2) {
+    public multiplicandoArreglos_suma(double[] arreglo1, double[] arreglo2, double suma) {
         this.arreglo1 = arreglo1;
         this.arreglo2 = arreglo2;
+        this.suma = suma;
     }
 
     @Override
@@ -19,6 +21,6 @@ public class multiplicandoArreglos extends Thread{
     }
 
     public double getResultado() {
-        return resultado;
+        return resultado+suma;
     }
 }

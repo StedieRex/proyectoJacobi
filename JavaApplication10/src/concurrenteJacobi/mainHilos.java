@@ -72,8 +72,6 @@ public class mainHilos {
         int[][] LmasU;
         int n=100;
         ArrayList <guardandoArreglos> listaArreglos = new ArrayList<guardandoArreglos>();
-        ArrayList <guardandoArreglos> listaResultado = new ArrayList<guardandoArreglos>();
-
         //la parte 1 representa la multiplicacion de D-1 por b, la parte 2 es la suma de D-1(L+U)
         double[] resultadoParte1; 
         double[] resultadoParte2;
@@ -175,13 +173,13 @@ public class mainHilos {
             listaArreglos.add(new guardandoArreglos(resultadoParte2));
         }
 
-        int [] resultado = new int[b.length];
+        double [] resultado = new double[b.length];
         //do{
             int faltante2 = 0;
             for(int i=0; i<listaArreglos.size()-1; i+=numHilos){
                 System.out.println("i: "+i);
-                multiplicandoArreglos hilo = new multiplicandoArreglos(listaArreglos.get(i).getArreglo(), arregloIteracion);
-                multiplicandoArreglos hilo2 = new multiplicandoArreglos(listaArreglos.get(i+1).getArreglo(), arregloIteracion);
+                multiplicandoArreglos_suma hilo = new multiplicandoArreglos_suma(listaArreglos.get(i).getArreglo(), arregloIteracion, resultadoParte1[i]);
+                multiplicandoArreglos_suma hilo2 = new multiplicandoArreglos_suma(listaArreglos.get(i+1).getArreglo(), arregloIteracion, resultadoParte1[i+1]);
                 // multiplicandoArreglos hilo3 = new multiplicandoArreglos(listaArreglos.get(i+2).getArreglo(), b);
                 // multiplicandoArreglos hilo4 = new multiplicandoArreglos(listaArreglos.get(i+3).getArreglo(), b);
                 // multiplicandoArreglos hilo5 = new multiplicandoArreglos(listaArreglos.get(i+4).getArreglo(), b);
@@ -200,15 +198,29 @@ public class mainHilos {
                 }catch(InterruptedException e){
                     
                 }
-                resultado[i] = (int)hilo.getResultado();
-                resultado[i+1] = (int)hilo2.getResultado();
+                resultado[i] = hilo.getResultado();
+                resultado[i+1] = hilo2.getResultado();
                 // resultado[i+2] = (int)hilo3.getResultado();
                 // resultado[i+3] = (int)hilo4.getResultado();
                 // resultado[i+4] = (int)hilo5.getResultado();
                 faltante2 = i;
             }
+
+            if(faltante2<(listaArreglos.size()-1)){
+                for(int i=faltante2; i<listaArreglos.size(); i++){
+                    multiplicandoArreglos_suma hilo = new multiplicandoArreglos_suma(listaArreglos.get(i).getArreglo(), arregloIteracion, resultadoParte1[i]);
+                    hilo.start();
+                    try{
+                        hilo.join();
+                    }catch(InterruptedException e){
+                        
+                    }
+                    resultado[i] = hilo.getResultado();
+                }
+            }
+
+            imprimirVector(resultado);
         //}while(comprandoResultado(b,resultado));
-        imprimirVector(resultado);
         //--------------------obteniendo tiempo de ejecucion---------------------
         // Obtener el tiempo de finalización
         long endTime = System.nanoTime();
