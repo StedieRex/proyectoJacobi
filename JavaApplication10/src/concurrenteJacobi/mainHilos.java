@@ -66,7 +66,7 @@ public class mainHilos {
     }
 
     public static boolean comprandoResultado(double[] resultado){
-        double error = 0.01;	
+        double error = 0.00001;	
         if(bandera){
             for(int i=0; i<resultado.length; i++){
                 double comparacion= Math.abs(1-antesecesores[i]/resultado[i]);
@@ -102,11 +102,11 @@ public class mainHilos {
 
         /*matriz de prueba */
         double[][] prueba = {
-            {0.7,0.1,-8.2},
-            {25,-0.9,-0.3},
-            {3.7,7.3,-0.1},
+            {1,1,-1},
+            {1,2,2},
+            {2,1,-1},
         };
-        double b[] = {-56.4,20.2,-18.9};/* */
+        double b[] = {1,0,1};/* */
 
         /*double[][] prueba = {
             {3,-1,-1},
@@ -209,8 +209,8 @@ public class mainHilos {
 
         double [] resultado = new double[b.length];
 
-        for(int x=0; x<10; x++){
-        //do{
+        //for(int x=0; x<10; x++){
+        do{
             int faltante2 = 0;
             for(int i=0; i<listaArreglos.size()-1; i+=numHilos){
                
@@ -255,13 +255,13 @@ public class mainHilos {
                 }
             }
 
-            //imprimirVector(resultado);
+            imprimirVector(resultado);
             for(int i=0; i<resultado.length; i++){
                 arregloIteracion[i] = resultado[i];
             }
             System.out.println(comprandoResultado(resultado));
-        //}while(comprandoResultado(resultado));
-        }
+        }while(comprandoResultado(resultado));
+        //}
         //--------------------obteniendo tiempo de ejecucion---------------------
         // Obtener el tiempo de finalización
         long endTime = System.nanoTime();
