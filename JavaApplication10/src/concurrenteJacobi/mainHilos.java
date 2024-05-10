@@ -7,6 +7,8 @@ import concurrenteJacobi.guardandoArreglos;
 
 public class mainHilos {
 
+    private static double[] antesecesores;
+    private static boolean bandera=false;
     public static void imprimirMatriz(double[][] matrix){
         for(int i=0; i<matrix.length; i++){
             for(int j=0; j<matrix.length; j++){
@@ -39,9 +41,9 @@ public class mainHilos {
         System.out.println();
     }
 
-    public static int[] transpuestaNegativaMatrix(int[][] matrix){
+    public static double[] transpuestaNegativaMatrix(double[][] matrix){
         int n = matrix.length;
-        int[] D = new int[n];
+        double[] D = new double[n];
         for(int i=0; i<n; i++){
             D[i] = matrix[i][i];
         }
@@ -49,9 +51,9 @@ public class mainHilos {
     }
 
     // da la matriz triangular inferior con los elementos negativos, sin diagonal-
-    public static int[][] obteniendoLmasU(int[][] matrix){
+    public static double[][] obteniendoLmasU(double[][] matrix){
         int n = matrix.length;
-        int[][] LmasU = new int[n][n];
+        double[][] LmasU = new double[n][n];
         for(int i=0; i<n; i++){
             for(int j=0; j<n; j++){
                 if(i!=j)
@@ -63,27 +65,55 @@ public class mainHilos {
         return LmasU;
     }
 
+    public static boolean comprandoResultado(double[] resultado){
+        double error = 0.01;	
+        if(bandera){
+            for(int i=0; i<resultado.length; i++){
+                double comparacion= Math.abs(1-antesecesores[i]/resultado[i]);
+                System.out.println(comparacion+"<"+error);
+                if(comparacion<=error){
+                    return false;
+                }
+                antesecesores[i] = resultado[i];
+            }
+
+            return true;
+        }
+        antesecesores = new double[resultado.length];
+        for(int i=0; i<resultado.length; i++){
+            antesecesores[i] = resultado[i];
+        }
+        bandera = true;
+        return true;
+    }
+
     public static void main(String[] args) {
         //obtener tiempo de incio
         long startTime = System.nanoTime();
 
         //inicio de variables
-        int[] D;
-        int[][] LmasU;
-        int n=100;
+        double[] D;
+        double[][] LmasU;
+        int n=10;
         ArrayList <guardandoArreglos> listaArreglos = new ArrayList<guardandoArreglos>();
         //la parte 1 representa la multiplicacion de D-1 por b, la parte 2 es la suma de D-1(L+U)
         double[] resultadoParte1; 
         double[] resultadoParte2;
 
         /*matriz de prueba */
-        int[][] prueba = {
+        double[][] prueba = {
+            {0.7,0.1,-8.2},
+            {25,-0.9,-0.3},
+            {3.7,7.3,-0.1},
+        };
+        double b[] = {-56.4,20.2,-18.9};/* */
+
+        /*double[][] prueba = {
             {3,-1,-1},
             {-1,3,1},
-            {2,1,4},
+            {2,1,4}
         };
-        double b[] = {1,3,7};
-
+        double b[] = {1,3,7};/* */
         /*matriz de aleatoria */
         // int prueba[][] = new int[n][n];
         // // numeros aleatorios del -10 al 10 para rellenar la matriz
@@ -92,10 +122,10 @@ public class mainHilos {
         //         prueba[i][j] = (int)(Math.random()*21)-10;
         //     }
         // }
-        // double b[] = new int[n];
+        // double b[] = new double[n];
         // // numeros aleatorios del -10 al 10 para rellenar el vector
         // for(int i=0; i<n; i++){
-        //     b[i] = (int)(Math.random()*21)-10;
+        //     b[i] = (Math.random()*21)-10;
         // }
 
         double []arregloIteracion = new double[b.length];
@@ -172,12 +202,18 @@ public class mainHilos {
             }
             listaArreglos.add(new guardandoArreglos(resultadoParte2));
         }
+    
+        /*for(int i=0; i<listaArreglos.size(); i++){
+            imprimirVector(listaArreglos.get(i).getArreglo());
+        }/* */
 
         double [] resultado = new double[b.length];
+
+        for(int x=0; x<10; x++){
         //do{
             int faltante2 = 0;
             for(int i=0; i<listaArreglos.size()-1; i+=numHilos){
-                System.out.println("i: "+i);
+               
                 multiplicandoArreglos_suma hilo = new multiplicandoArreglos_suma(listaArreglos.get(i).getArreglo(), arregloIteracion, resultadoParte1[i]);
                 multiplicandoArreglos_suma hilo2 = new multiplicandoArreglos_suma(listaArreglos.get(i+1).getArreglo(), arregloIteracion, resultadoParte1[i+1]);
                 // multiplicandoArreglos hilo3 = new multiplicandoArreglos(listaArreglos.get(i+2).getArreglo(), b);
@@ -219,8 +255,13 @@ public class mainHilos {
                 }
             }
 
-            imprimirVector(resultado);
-        //}while(comprandoResultado(b,resultado));
+            //imprimirVector(resultado);
+            for(int i=0; i<resultado.length; i++){
+                arregloIteracion[i] = resultado[i];
+            }
+            System.out.println(comprandoResultado(resultado));
+        //}while(comprandoResultado(resultado));
+        }
         //--------------------obteniendo tiempo de ejecucion---------------------
         // Obtener el tiempo de finalización
         long endTime = System.nanoTime();

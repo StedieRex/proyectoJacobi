@@ -1,11 +1,10 @@
 package concurrenteJacobi;
 
 public class multiplicacionD_1B extends Thread{
-    private int elementoD;
-    private double elementoB;
+    private double elementoB, elementoD;
     private double resultado;
 
-    public multiplicacionD_1B(int elementoD, double elementoB) {
+    public multiplicacionD_1B(double elementoD, double elementoB) {
         this.elementoD = elementoD;
         this.elementoB = elementoB;
     }
